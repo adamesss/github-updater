@@ -36,15 +36,29 @@ class GHU_Upgrade extends Base {
 	 */
 	public function __construct() {
 		$this->load_options();
+		$db_version = isset( self::$options['db_version'] ) ? self::$options['db_version'] : null;
 
-		if ( ! isset( self::$options['db_version'] ) ||
-		     self::$options['db_version'] < $this->db_version
-		) {
-			$this->delete_all_transients();
-
-			$options = array_merge( self::$options, array( 'db_version' => $this->db_version ) );
-			update_site_option( 'github_updater', $options );
+		if ( $db_version === $this->db_version ) {
+			return;
 		}
+
+		switch ( $db_version ) {
+			case null:
+				$this->upgrade_000();
+				break;
+			case 600:
+				break;
+		}
+
+		$options = array_merge( self::$options, array( 'db_version' => $this->db_version ) );
+		update_site_option( 'github_updater', $options );
+	}
+
+	/**
+	 * Upgrade from version less than 6.0.0.
+	 */
+	private function upgrade_000() {
+		$this->delete_all_transients();
 	}
 
 }
