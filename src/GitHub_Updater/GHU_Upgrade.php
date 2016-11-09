@@ -41,6 +41,7 @@ class GHU_Upgrade extends Base {
 		     self::$options['db_version'] < $this->db_version
 		) {
 			$this->delete_all_transients();
+
 			$options = array_merge( self::$options, array( 'db_version' => $this->db_version ) );
 			update_site_option( 'github_updater', $options );
 		}
